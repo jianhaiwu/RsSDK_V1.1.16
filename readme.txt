@@ -1,0 +1,59 @@
+说明：SDKWrapper封装了SDK的调用方法，为上层开发者提供了更加便利的调用方法
+      在SDKWrapper大量使用了回调函数，禁止在回调函数中调用相关的stop函数
+	  禁止在回调函数执行过程中调用stop相关的函数，所有调用了start的函数必须
+	  调用stop函数，在windows中可以使用postevent将消息抛到主线程，在ios或者
+	  android中可以使用消息队列
+
+注意事项：
+    1）device_id和session_id从int变成了void*类型
+    2）如下函数的返回值判断从(<0)变成了(==0)，具体见文档
+	rs_android_surface_create(返回值)
+	rs_android_surface_destory(参数)
+	rs_android_surface_change(参数)
+	rs_android_surface_draw(参数)
+	
+    rs_create_device(返回值)
+    rs_start_preview(返回值)
+    rs_search_record_by_month(返回值)
+    rs_search_record_by_day(返回值)
+    rs_start_download_by_file(返回值)
+    rs_start_download_by_time(返回值)
+    rs_start_local_playback(返回值)
+    rs_start_remote_playback(返回值)
+    rs_start_talk_to_device(返回值)
+    rs_start_talk_to_channel(返回值)
+    rs_start_convert_file(返回值)
+    rs_start_playback_thumbnails(返回值)
+    rs_start_local_playback_thumbnails(返回值)
+    rs_start_human_face_alarm_report(返回值)
+    rs_start_human_face_param(返回值)
+    rs_upload_picture_from_memory(返回值)
+	  
+windows
+    1）如果是c++工程，请按照Demo来使用
+	2）如果是Delphi或者C#的工程，由于SDKWrapper是用c++来编写的，需要对Delphi或者C#
+	   提供C的接口供上层来使用，我们同样提供了编译好的RSSDKWrapper.dll。如果是这种
+	   使用方法来使用SDK，请打开SDKWrapper/Include/RSSDKWrapper.h中的
+	   EXPORT_SDKWRAPPER_AS_DLL宏定义。此RSSDKWrapper.dll仅将SDKWrapper目录下的所有
+	   CPP文件编译成了动态库
+IOS
+    1）此Demo仅提供了登录、登出、打开预览、关闭预览的功能。其他的功能请参考Windows下面的
+	   Demo使用方法
+	2）如果需要录像请确保app有读写磁盘的权限，如果需要对讲或者播放声音请确保app有
+	   麦克风以及扬声器的权限。这点对于ios开发者应该是必须知道的
+	3）如果使用P2P的方式来连接设备，需要在app进入后台之前依次调用停止预览、断开连接的操作，
+	   再过30s后调用销毁P2P资源的函数rs_destroy_p2p_resource_enter_background。这点对于
+	   ios开发者应该是必须知道的
+	4）只支持真机，不支持模拟器，ios9.0及以上版本
+Android
+    1）此Demo仅提供了登录、登出、打开预览、关闭预览的功能。其他的功能请参考Windows下面的
+	   Demo使用方法
+	2）如果需要录像请确保app有读写磁盘的权限，如果需要对讲或者播放声音请确保app有
+	   麦克风以及扬声器的权限。这点对于android开发者应该是必须知道的
+	3）请注意APP的名字以及JNI方法的名字对应起来。
+	   即GlSurfaceViewDemoapp/src/main/cpp/Android/SDKWrapper.h中的JNI_HELP_CLASS以及
+	   JNI_FUNCTION(NAME)要与
+	   GlSurfaceViewDemo/app/src/main/java/com/example/glsurfaceviewdemo/JniHandler.java
+	   中的package名字一致。这点对于android开发者应该是必须知道的
+	4）只支持真机，不支持模拟器，sdk最低版本为21及以上
+		
